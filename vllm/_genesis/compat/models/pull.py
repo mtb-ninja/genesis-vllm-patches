@@ -324,7 +324,6 @@ def main(argv=None) -> int:
 
     entry = get_model(args.model_key)
     if entry is None:
-        print(f"args: {args}", file=sys.stderr)
         print(f"unknown model key: {args.model_key!r}", file=sys.stderr)
         print("Run `python3 -m vllm._genesis.compat.models.list` to see available models.",
               file=sys.stderr)
