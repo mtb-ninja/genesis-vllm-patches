@@ -287,7 +287,7 @@ echo "[{model_entry.key}] container started; tail logs with: docker logs -f vllm
 # ─── CLI ─────────────────────────────────────────────────────────────────
 
 
-def _parse_args():
+def _parse_args(argv=None):
     p = argparse.ArgumentParser(
         prog="python3 -m vllm._genesis.compat.models.pull",
         description="Download a Genesis-supported model from HuggingFace + "
@@ -313,17 +313,18 @@ def _parse_args():
                    help="Override the registry's hf_id (e.g. use Lorbus's "
                         "Qwen3.6-27B variant instead of Intel's). Use the "
                         "exact 'org/repo' string accepted by huggingface_hub.")
-    return p.parse_args()
+    return p.parse_args(argv)
 
 
 def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    args = _parse_args()
+    args = _parse_args(argv)
 
     from vllm._genesis.compat.models.registry import get_model
 
     entry = get_model(args.model_key)
     if entry is None:
+        print(f"args: {args}", file=sys.stderr)
         print(f"unknown model key: {args.model_key!r}", file=sys.stderr)
         print("Run `python3 -m vllm._genesis.compat.models.list` to see available models.",
               file=sys.stderr)
