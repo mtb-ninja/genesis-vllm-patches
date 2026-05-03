@@ -100,6 +100,8 @@ def main(argv=None) -> int:
                    help="Workload preference: long_ctx_tool_call / interactive / throughput")
     p.add_argument("--no-pull", action="store_true",
                    help="Skip the actual download step")
+    p.add_argument("--hf-id-override", default=None,
+                   help="Override the registry's hf_id (e.g. use Lorbus's Qwen3.6-27B variant)")
     args = p.parse_args(argv)
 
     print("=" * 70)
@@ -199,7 +201,10 @@ def main(argv=None) -> int:
             return 0
 
     from vllm._genesis.compat.models.pull import main as pull_main
-    return pull_main([chosen.key, "--workload", workload])
+    pull_args = [chosen.key, "--workload", workload]
+    if args.hf_id_override:
+        pull_args.extend(["--hf-id-override", args.hf_id_override])
+    return pull_main(pull_args)
 
 
 if __name__ == "__main__":
